@@ -47,7 +47,13 @@
             </v-bottom-sheet>
           </v-col>
           <v-col>
-            <v-btn color="green" v-on:click="deleteFields" @click="create = !create" block x-large>
+            <v-btn
+              color="green"
+              v-on:click="deleteFields"
+              @click="create = !create"
+              block
+              x-large
+            >
               СОЗДАТЬ ToDO
             </v-btn>
             <v-bottom-sheet hide-overlay v-model="create">
@@ -212,9 +218,9 @@ export default {
       this.title = title;
       this.description = description;
     },
-    deleteFields(){
-      this.title = ""
-      this.description = ""
+    deleteFields() {
+      this.title = "";
+      this.description = "";
     },
     async deleteToDoFromList(id) {
       await axios
