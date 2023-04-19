@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-app-bar app color="pink" dense>
+      <v-app-bar app color="pink"  text-color="white" dense>
         <v-app-bar-title> бэбра </v-app-bar-title>
       </v-app-bar>
       <v-container>
@@ -9,7 +9,7 @@
           <v-col>
             <v-btn
               color="red"
-              @click="deleteAllList = !deleteAllList"
+              v-on:click="deleteAllList = !deleteAllList"
               block
               x-large
             >
@@ -23,7 +23,7 @@
                     <v-btn
                       text
                       color="green"
-                      @click="deleteAllList = !deleteAllList"
+                      v-on:click="deleteAllList = !deleteAllList"
                       block
                       large
                     >
@@ -34,8 +34,7 @@
                     <v-btn
                       text
                       color="red"
-                      v-on:click="deleteToDoList()"
-                      @click="deleteAllList = !deleteAllList"
+                      v-on:click="deleteToDoList(), deleteAllList = !deleteAllList"
                       block
                       large
                     >
@@ -49,8 +48,7 @@
           <v-col>
             <v-btn
               color="green"
-              v-on:click="deleteFields"
-              @click="create = !create"
+              v-on:click="deleteFields(), create = !create"
               block
               x-large
             >
@@ -60,8 +58,7 @@
               <v-sheet class="text-center" height="300px">
                 <v-row>
                   <v-btn
-                    v-on:click="createToDo()"
-                    @click="create = !create"
+                    v-on:click="createToDo(), create = !create"
                     color="green"
                     block
                     x-large
@@ -102,7 +99,7 @@
                   <v-card-title> {{ todo.title }} </v-card-title>
                 </v-col>
                 <v-col class="text-right">
-                  <v-btn @click="deleteTODO = !deleteTODO">
+                  <v-btn v-on:click="deleteTODO = !deleteTODO, setID(todo.id)" >
                     <v-icon dark large color="red" rounded> mdi-delete </v-icon>
                   </v-btn>
                   <v-bottom-sheet persistent v-model="deleteTODO">
@@ -113,7 +110,7 @@
                           <v-btn
                             text
                             color="green"
-                            @click="deleteTODO = !deleteTODO"
+                            v-on:click="deleteTODO = !deleteTODO"
                             block
                             large
                           >
@@ -124,8 +121,7 @@
                           <v-btn
                             text
                             color="red"
-                            v-on:click="deleteToDoFromList(String(todo.id))"
-                            @click="deleteTODO = !deleteTODO"
+                            v-on:click="deleteToDoFromList(), deleteTODO = !deleteTODO"
                             block
                             large
                           >
@@ -143,8 +139,7 @@
                 </v-col>
                 <v-col class="text-right">
                   <v-btn
-                    v-on:click="setFields(todo.title, todo.description)"
-                    @click="update = !update"
+                    v-on:click="setFields(todo.title, todo.description), setID(todo.id),update = !update"
                   >
                     <v-icon dark large color="green" rounded justify="left">
                       mdi-pencil
@@ -154,8 +149,7 @@
                     <v-sheet class="text-center" height="300px">
                       <v-row>
                         <v-btn
-                          v-on:click="updateToDo(String(todo.id))"
-                          @click="update = !update"
+                          v-on:click="updateToDo(todo.id), update = !update"
                           color="green"
                           block
                           x-large
@@ -211,6 +205,7 @@ export default {
       title: "",
       description: "",
       todoList: [],
+      id0: ""
     };
   },
   methods: {
@@ -218,13 +213,16 @@ export default {
       this.title = title;
       this.description = description;
     },
+    setID(id0){
+      this.id0 = id0
+    },
     deleteFields() {
       this.title = "";
       this.description = "";
     },
-    async deleteToDoFromList(id) {
+    async deleteToDoFromList() {
       await axios
-        .delete("http://localhost:3100/api/todo/" + id)
+        .delete("http://localhost:3100/api/todo/" + this.id0)
         .catch(function (error) {
           console.log(error);
         });
@@ -234,11 +232,10 @@ export default {
       const response = await axios.get("http://localhost:3100/api/todo");
       console.log("data todolist", response.data.todoList);
       this.todoList = response.data.todoList;
-      this.todoList.reverse();
     },
-    async updateToDo(id) {
+    async updateToDo() {
       await axios
-        .patch("http://localhost:3100/api/todo/" + id, {
+        .patch("http://localhost:3100/api/todo/" + this.id0, {
           title: this.title,
           description: this.description,
         })
